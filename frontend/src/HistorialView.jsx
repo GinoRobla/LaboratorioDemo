@@ -1,11 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "./api.js";
 import { IconCheck, IconAlert, IconClipboard } from "./icons.jsx";
+import Pagination from "./Pagination.jsx";
+
+const PAGE_SIZE = 10;
 
 export default function HistorialView() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     api
@@ -14,6 +18,16 @@ export default function HistorialView() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
+
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const pageItems = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return items.slice(start, start + PAGE_SIZE);
+  }, [items, page]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [totalPages, page]);
 
   return (
     <section>
@@ -41,7 +55,7 @@ export default function HistorialView() {
               </tr>
             </thead>
             <tbody>
-              {items.map((item) => (
+              {pageItems.map((item) => (
                 <tr key={item.id}>
                   <td className="muted">{item.fecha}</td>
                   <td>{item.paciente || "—"}</td>
@@ -66,6 +80,8 @@ export default function HistorialView() {
           </table>
         </div>
       )}
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     </section>
   );
 }

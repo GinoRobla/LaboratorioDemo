@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "./api.js";
 import { IconPlus, IconEdit, IconTrash, IconFlask } from "./icons.jsx";
 import Modal from "./Modal.jsx";
+import Pagination from "./Pagination.jsx";
 
 const EMPTY = { nombre: "", codigo: "", precio: "", sinonimos: "" };
+const PAGE_SIZE = 10;
 
 export default function CatalogoView() {
   const [items, setItems] = useState([]);
@@ -12,6 +14,7 @@ export default function CatalogoView() {
   const [form, setForm] = useState(EMPTY);
   const [editingId, setEditingId] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
+  const [page, setPage] = useState(1);
 
   async function load() {
     setLoading(true);
@@ -28,6 +31,16 @@ export default function CatalogoView() {
   useEffect(() => {
     load();
   }, []);
+
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const pageItems = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return items.slice(start, start + PAGE_SIZE);
+  }, [items, page]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [totalPages, page]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -160,7 +173,7 @@ export default function CatalogoView() {
               </tr>
             </thead>
             <tbody>
-              {items.map((item) => (
+              {pageItems.map((item) => (
                 <tr key={item.id}>
                   <td>{item.nombre}</td>
                   <td className="muted">{item.codigo || "—"}</td>
@@ -182,6 +195,8 @@ export default function CatalogoView() {
           </table>
         </div>
       )}
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     </section>
   );
 }

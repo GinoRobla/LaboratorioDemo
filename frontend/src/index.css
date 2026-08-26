@@ -554,6 +554,34 @@ button.icon-only svg {
   margin: 0;
 }
 
+/* Paginación */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.pagination .icon-only {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.pagination .icon-only:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  min-width: 110px;
+  text-align: center;
+}
+
 /* Turnero: navegador de día */
 .day-nav {
   display: flex;
