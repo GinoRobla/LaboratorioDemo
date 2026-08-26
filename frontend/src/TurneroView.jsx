@@ -1,15 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "./api.js";
 import { IconChevronLeft, IconChevronRight, IconCalendar } from "./icons.jsx";
-import Pagination from "./Pagination.jsx";
 
 const ESTADO_BADGE = {
   Confirmado: "badge-ok",
   Pendiente: "badge-warn",
   Cancelado: "badge-off",
 };
-
-const PAGE_SIZE = 10;
 
 function sameDay(a, b) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
@@ -27,7 +24,6 @@ export default function TurneroView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedDate, setSelectedDate] = useState(() => new Date());
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     api
@@ -51,16 +47,6 @@ export default function TurneroView() {
         .sort((a, b) => new Date(a.fechaHora) - new Date(b.fechaHora)),
     [turnos, selectedDate]
   );
-
-  useEffect(() => {
-    setPage(1);
-  }, [selectedDate]);
-
-  const totalPages = Math.max(1, Math.ceil(turnosDelDia.length / PAGE_SIZE));
-  const turnosPagina = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return turnosDelDia.slice(start, start + PAGE_SIZE);
-  }, [turnosDelDia, page]);
 
   function shiftDay(delta) {
     const d = new Date(selectedDate);
@@ -118,7 +104,7 @@ export default function TurneroView() {
         </div>
       ) : (
         <div className="turno-day-list">
-          {turnosPagina.map((t) => (
+          {turnosDelDia.map((t) => (
             <div key={t.id} className="turno-row">
               <div className="turno-row-time">
                 {new Date(t.fechaHora).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs
@@ -135,8 +121,6 @@ export default function TurneroView() {
           ))}
         </div>
       )}
-
-      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     </section>
   );
 }
