@@ -130,6 +130,9 @@ export default function TurneroView() {
               {selectedDay
                 ? selectedDay.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" })
                 : "Seleccioná un día"}
+              {selectedTurnos.length > 0 && (
+                <span className="side-count"> · {selectedTurnos.length} turno{selectedTurnos.length === 1 ? "" : "s"}</span>
+              )}
             </h3>
             {selectedTurnos.length === 0 ? (
               <div className="empty-state small">
