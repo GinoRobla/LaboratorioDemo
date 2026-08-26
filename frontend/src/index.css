@@ -186,6 +186,13 @@ body {
   padding: 26px 44px 20px;
   background: var(--bg);
   border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  justify-content: center;
+}
+
+.topbar > div {
+  width: 100%;
+  max-width: 1120px;
 }
 
 .page-title {
@@ -205,8 +212,10 @@ body {
 
 .content {
   flex: 1;
+  width: 100%;
   padding: 28px 44px 48px;
   max-width: 1120px;
+  margin: 0 auto;
 }
 
 .stats-row {
@@ -276,6 +285,93 @@ body {
 
 .panel-header {
   display: none; /* title moved to topbar */
+}
+
+/* Toolbar above tables */
+.section-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.section-toolbar .muted {
+  font-size: 0.85rem;
+}
+
+/* Inline card form (add/edit) */
+.inline-card-form {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  padding: 18px 20px 20px;
+  margin-bottom: 22px;
+  animation: dropIn 0.16s ease;
+}
+
+@keyframes dropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inline-card-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.form-grid .span-2 {
+  grid-column: span 2;
+}
+
+.form-grid input {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-grid input:focus {
+  outline: none;
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px var(--brand-100);
+}
+
+.inline-card-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 /* Form */
@@ -446,6 +542,215 @@ tbody tr:hover {
 .badge-warn {
   background: var(--warn-bg);
   color: var(--warn);
+}
+
+.badge-off {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+button.icon-only {
+  padding: 8px;
+}
+
+button.icon-only svg {
+  margin: 0;
+}
+
+/* Calendar */
+.calendar-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+  align-items: start;
+}
+
+.calendar-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.calendar-title {
+  font-family: "Manrope", sans-serif;
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: var(--text);
+  text-transform: capitalize;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-weekdays {
+  margin-bottom: 6px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 0;
+}
+
+.calendar-cell {
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  background: var(--surface);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text);
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.calendar-cell:hover {
+  border-color: var(--brand-500);
+}
+
+.calendar-cell.empty {
+  background: transparent;
+  cursor: default;
+}
+
+.calendar-cell.today .cell-number {
+  color: var(--brand-700);
+  font-weight: 800;
+}
+
+.calendar-cell.selected {
+  background: var(--brand-900);
+  border-color: var(--brand-900);
+}
+
+.calendar-cell.selected .cell-number {
+  color: white;
+}
+
+.cell-number {
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.cell-dots {
+  display: flex;
+  gap: 3px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.dot-ok {
+  background: var(--brand-700);
+}
+
+.dot-warn {
+  background: var(--warn);
+}
+
+.dot-off {
+  background: var(--danger);
+}
+
+.calendar-cell.selected .dot-ok,
+.calendar-cell.selected .dot-warn,
+.calendar-cell.selected .dot-off {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.calendar-side {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.side-title {
+  margin: 0 0 14px;
+  font-family: "Manrope", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  color: var(--text);
+}
+
+.turno-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.turno-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+
+.turno-time {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--brand-900);
+  white-space: nowrap;
+}
+
+.turno-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.turno-paciente {
+  font-weight: 600;
+  font-size: 0.86rem;
+}
+
+.turno-estudios {
+  font-size: 0.76rem;
+  margin-top: 2px;
+}
+
+.empty-state.small {
+  padding: 24px 8px;
+}
+
+.empty-state.small .empty-state-icon {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 800px) {
+  .calendar-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 .empty-state {

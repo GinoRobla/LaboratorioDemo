@@ -19,4 +19,5 @@ export const api = {
   updateEstudio: (id, data) => request(`/catalogo/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteEstudio: (id) => request(`/catalogo/${id}`, { method: "DELETE" }),
   getHistorial: () => request("/historial"),
+  getTurnos: () => request("/turnos"),
 };

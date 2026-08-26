@@ -83,6 +83,34 @@ export const IconInbox = (props) => (
   </svg>
 );
 
+export const IconCalendar = (props) => (
+  <svg {...base} {...props}>
+    <rect x="3.5" y="5" width="17" height="16" rx="2" />
+    <path d="M8 3v4" />
+    <path d="M16 3v4" />
+    <path d="M3.5 10h17" />
+  </svg>
+);
+
+export const IconChevronLeft = (props) => (
+  <svg {...base} {...props}>
+    <path d="M14.5 5.5 8.5 12l6 6.5" />
+  </svg>
+);
+
+export const IconChevronRight = (props) => (
+  <svg {...base} {...props}>
+    <path d="M9.5 5.5 15.5 12l-6 6.5" />
+  </svg>
+);
+
+export const IconClose = (props) => (
+  <svg {...base} {...props}>
+    <path d="M6 6l12 12" />
+    <path d="M18 6 6 18" />
+  </svg>
+);
+
 export const IconWallet = (props) => (
   <svg {...base} {...props}>
     <rect x="3" y="6" width="18" height="13" rx="2" />

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import CatalogoView from "./CatalogoView.jsx";
 import HistorialView from "./HistorialView.jsx";
+import TurneroView from "./TurneroView.jsx";
 import { api } from "./api.js";
-import { IconFlask, IconClipboard, IconGrid, IconInbox, IconWallet } from "./icons.jsx";
+import { IconFlask, IconClipboard, IconGrid, IconInbox, IconWallet, IconCalendar } from "./icons.jsx";
 
 const NAV_ITEMS = [
   { id: "catalogo", label: "Catálogo", icon: IconFlask },
+  { id: "turnero", label: "Turnero", icon: IconCalendar },
   { id: "historial", label: "Historial", icon: IconClipboard },
 ];
 
@@ -37,6 +39,10 @@ const PAGE_META = {
   historial: {
     title: "Historial de recetas",
     subtitle: "Cada presupuesto que el bot le generó a un paciente por WhatsApp.",
+  },
+  turnero: {
+    title: "Turnero",
+    subtitle: "Turnos agendados por el bot para toma de estudios.",
   },
 };
 
@@ -107,7 +113,11 @@ export default function App() {
             />
           </div>
 
-          <div className="panel">{tab === "catalogo" ? <CatalogoView /> : <HistorialView />}</div>
+          <div className="panel">
+            {tab === "catalogo" && <CatalogoView />}
+            {tab === "historial" && <HistorialView />}
+            {tab === "turnero" && <TurneroView />}
+          </div>
         </main>
       </div>
     </div>
