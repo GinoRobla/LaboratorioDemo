@@ -1,9 +1,37 @@
 # Workflow n8n — Bot de presupuestos de laboratorio
 
-Spec lista para armar el workflow apenas esté autorizado el conector MCP de n8n. Cada
-sección es un nodo. Pegar el prompt y el código tal cual — ya están redactados
-siguiendo las convenciones de agentes de n8n (rol primero, salida estructurada,
-contexto dinámico al final).
+> **Estado**: construido en n8n como un único workflow, "Laboratorio - Bot WhatsApp".
+> Esta spec queda como referencia de diseño, el workflow real vive en n8n.
+
+Spec lista para armar el workflow. Cada sección es un nodo. Pegar el prompt y el código
+tal cual - ya están redactados siguiendo las convenciones de agentes de n8n (rol primero,
+salida estructurada, contexto dinámico al final).
+
+## Arquitectura: por qué Turnos es un subagente y Presupuesto no
+
+El workflow tiene **un solo Agente Principal**, con **un subagente real** (Turnos,
+nodo `agentTool`, con su propio modelo y sus propias tools de Airtable) y **una rama
+determinística** (Presupuesto), no dos subagentes simétricos. No es por preferencia de
+estilo — es un límite real de n8n:
+
+- Una *tool* de un agente siempre es **un solo nodo**. El pipeline de Presupuesto
+  necesita varios pasos encadenados con espera (bajar imagen → OCR → esperar →
+  consultar resultado → interpretar → matchear → guardar) — eso no entra en un solo
+  nodo-tool salvo que sea un **Code Tool**, y el Code Tool **no tiene acceso a HTTP**
+  (no puede llamar a Evolution ni a Azure), solo sirve para cálculo puro.
+- Aunque se pudiera, pasarle la imagen en base64 a una tool como parámetro significaría
+  meter el archivo entero (decenas de miles de caracteres) en el contexto del LLM —
+  carísimo en tokens y nada confiable. Los datos binarios tienen que fluir por las
+  conexiones normales del workflow, no por el razonamiento de un agente.
+- La única forma de que Presupuesto fuera un subagente-tool de verdad sería que llame
+  a un subworkflow (`toolWorkflow`) — decisión consciente de no hacerlo, para mantener
+  todo en un único workflow.
+
+Turnos sí es un subagente real porque su tarea (interpretar fecha/hora en lenguaje
+natural, decidir si hay que ofrecer otro horario, confirmar) es genuinamente
+conversacional — ahí un LLM aporta algo que la lógica no. Presupuesto es un pipeline
+fijo sin decisiones que tomar, así que un IF determinístico (`¿Trae imagen?`) alcanza
+y es más barato y confiable que envolverlo en un agente.
 
 ## 1. Trigger — Webhook de Evolution API
 
