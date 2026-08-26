@@ -107,7 +107,7 @@ export default function TurneroView() {
           {turnosDelDia.map((t) => (
             <div key={t.id} className="turno-row">
               <div className="turno-row-time">
-                {new Date(t.fechaHora).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })} hs
+                {new Date(t.fechaHora).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })} hs
               </div>
               <div className="turno-row-info">
                 <div className="turno-row-estudios">{t.estudios}</div>
