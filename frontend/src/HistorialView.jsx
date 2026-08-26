@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "./api.js";
+import { IconCheck, IconAlert, IconClipboard } from "./icons.jsx";
 
 export default function HistorialView() {
   const [items, setItems] = useState([]);
@@ -16,20 +17,15 @@ export default function HistorialView() {
 
   return (
     <section>
-      <div className="panel-header">
-        <div>
-          <h2>Historial de recetas procesadas</h2>
-          <p className="panel-subtitle">Cada presupuesto que el bot le generó a un paciente por WhatsApp.</p>
-        </div>
-      </div>
-
       {error && <p className="error">{error}</p>}
 
       {loading ? (
         <p className="muted">Cargando historial…</p>
       ) : items.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">📋</div>
+          <div className="empty-state-icon">
+            <IconClipboard />
+          </div>
           <p>Todavía no se procesó ninguna receta.</p>
         </div>
       ) : (
@@ -52,9 +48,15 @@ export default function HistorialView() {
                   <td>{item.estudiosMatcheados || "—"}</td>
                   <td>
                     {item.noReconocidos ? (
-                      <span className="badge badge-warn">⚠ {item.noReconocidos}</span>
+                      <span className="badge badge-warn">
+                        <IconAlert />
+                        {item.noReconocidos}
+                      </span>
                     ) : (
-                      <span className="badge badge-ok">✓ Completo</span>
+                      <span className="badge badge-ok">
+                        <IconCheck />
+                        Completo
+                      </span>
                     )}
                   </td>
                   <td className="price-cell">${Number(item.total).toLocaleString("es-AR")}</td>

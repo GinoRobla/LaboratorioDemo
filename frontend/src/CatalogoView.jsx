@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "./api.js";
+import { IconPlus, IconEdit, IconTrash, IconFlask } from "./icons.jsx";
 
 const EMPTY = { nombre: "", codigo: "", precio: "", sinonimos: "" };
 
@@ -66,13 +67,6 @@ export default function CatalogoView() {
 
   return (
     <section>
-      <div className="panel-header">
-        <div>
-          <h2>Catálogo de estudios</h2>
-          <p className="panel-subtitle">Estudios, códigos y precios que usa el bot para armar presupuestos.</p>
-        </div>
-      </div>
-
       {error && <p className="error">{error}</p>}
 
       <form className="form-row" onSubmit={handleSubmit}>
@@ -100,7 +94,10 @@ export default function CatalogoView() {
           value={form.sinonimos}
           onChange={(e) => setForm({ ...form, sinonimos: e.target.value })}
         />
-        <button type="submit">{editingId ? "Guardar cambios" : "Agregar estudio"}</button>
+        <button type="submit">
+          {!editingId && <IconPlus />}
+          {editingId ? "Guardar cambios" : "Agregar estudio"}
+        </button>
         {editingId && (
           <button type="button" className="secondary" onClick={cancelEdit}>
             Cancelar
@@ -112,7 +109,9 @@ export default function CatalogoView() {
         <p className="muted">Cargando catálogo…</p>
       ) : items.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">🧪</div>
+          <div className="empty-state-icon">
+            <IconFlask />
+          </div>
           <p>Todavía no hay estudios cargados. Agregá el primero arriba.</p>
         </div>
       ) : (
@@ -136,9 +135,11 @@ export default function CatalogoView() {
                   <td className="muted">{item.sinonimos || "—"}</td>
                   <td className="actions">
                     <button className="ghost-small" onClick={() => startEdit(item)}>
+                      <IconEdit />
                       Editar
                     </button>
                     <button className="danger" onClick={() => handleDelete(item.id)}>
+                      <IconTrash />
                       Eliminar
                     </button>
                   </td>

@@ -2,12 +2,18 @@ import { useEffect, useState } from "react";
 import CatalogoView from "./CatalogoView.jsx";
 import HistorialView from "./HistorialView.jsx";
 import { api } from "./api.js";
+import { IconFlask, IconClipboard, IconGrid, IconInbox, IconWallet } from "./icons.jsx";
+
+const NAV_ITEMS = [
+  { id: "catalogo", label: "Catálogo", icon: IconFlask },
+  { id: "historial", label: "Historial", icon: IconClipboard },
+];
 
 const LogoMark = () => (
-  <svg width="34" height="34" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" rx="22" fill="url(#g)" />
+  <svg width="30" height="30" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" rx="24" fill="url(#g)" />
     <path
-      d="M40 20h20v22l16 30a8 8 0 01-7 12H31a8 8 0 01-7-12l16-30V20z"
+      d="M40 22h20v20l16 28a8 8 0 01-7 12H31a8 8 0 01-7-12l16-28V22z"
       fill="none"
       stroke="white"
       strokeWidth="6"
@@ -23,6 +29,17 @@ const LogoMark = () => (
   </svg>
 );
 
+const PAGE_META = {
+  catalogo: {
+    title: "Catálogo de estudios",
+    subtitle: "Estudios, códigos y precios que usa el bot para armar presupuestos.",
+  },
+  historial: {
+    title: "Historial de recetas",
+    subtitle: "Cada presupuesto que el bot le generó a un paciente por WhatsApp.",
+  },
+};
+
 export default function App() {
   const [tab, setTab] = useState("catalogo");
   const [stats, setStats] = useState({ estudios: null, procesadas: null, total: null });
@@ -36,50 +53,77 @@ export default function App() {
       .catch(() => setStats({ estudios: "—", procesadas: "—", total: "—" }));
   }, [tab]);
 
+  const meta = PAGE_META[tab];
+
   return (
     <div className="app-shell">
-      <header className="topbar">
-        <div className="brand">
+      <aside className="sidebar">
+        <div className="sidebar-brand">
           <LogoMark />
           <div className="brand-text">
             <span className="brand-name">NovaLab</span>
             <span className="brand-sub">Panel de gestión</span>
           </div>
         </div>
-        <nav className="tabs">
-          <button className={tab === "catalogo" ? "tab active" : "tab"} onClick={() => setTab("catalogo")}>
-            Catálogo
-          </button>
-          <button className={tab === "historial" ? "tab active" : "tab"} onClick={() => setTab("historial")}>
-            Historial
-          </button>
+
+        <nav className="side-nav">
+          <span className="side-nav-label">General</span>
+          {NAV_ITEMS.map(({ id, label, icon: Icon }) => (
+            <button key={id} className={tab === id ? "side-link active" : "side-link"} onClick={() => setTab(id)}>
+              <Icon />
+              {label}
+            </button>
+          ))}
         </nav>
-      </header>
 
-      <main className="content">
-        <div className="stats-row">
-          <StatCard label="Estudios en catálogo" value={stats.estudios} accent="teal" />
-          <StatCard label="Recetas procesadas" value={stats.procesadas} accent="indigo" />
-          <StatCard
-            label="Total presupuestado"
-            value={stats.total === null || stats.total === "—" ? stats.total : `$${Number(stats.total).toLocaleString("es-AR")}`}
-            accent="amber"
-          />
+        <div className="sidebar-footer">
+          <div className="sidebar-footer-dot" />
+          <div>
+            <div className="sidebar-footer-title">Bot activo</div>
+            <div className="sidebar-footer-sub">Presupuestos por WhatsApp</div>
+          </div>
         </div>
+      </aside>
 
-        <div className="panel">{tab === "catalogo" ? <CatalogoView /> : <HistorialView />}</div>
-      </main>
+      <div className="main-col">
+        <header className="topbar">
+          <div>
+            <h1 className="page-title">{meta.title}</h1>
+            <p className="page-subtitle">{meta.subtitle}</p>
+          </div>
+        </header>
 
-      <footer className="footer">NovaLab · Presupuestos automáticos de laboratorio por WhatsApp</footer>
+        <main className="content">
+          <div className="stats-row">
+            <StatCard icon={IconGrid} label="Estudios en catálogo" value={stats.estudios} accent="teal" />
+            <StatCard icon={IconInbox} label="Recetas procesadas" value={stats.procesadas} accent="indigo" />
+            <StatCard
+              icon={IconWallet}
+              label="Total presupuestado"
+              value={
+                stats.total === null || stats.total === "—" ? stats.total : `$${Number(stats.total).toLocaleString("es-AR")}`
+              }
+              accent="amber"
+            />
+          </div>
+
+          <div className="panel">{tab === "catalogo" ? <CatalogoView /> : <HistorialView />}</div>
+        </main>
+      </div>
     </div>
   );
 }
 
-function StatCard({ label, value, accent }) {
+function StatCard({ icon: Icon, label, value, accent }) {
   return (
     <div className={`stat-card accent-${accent}`}>
-      <span className="stat-value">{value === null ? "···" : value}</span>
-      <span className="stat-label">{label}</span>
+      <div className={`stat-icon accent-${accent}`}>
+        <Icon />
+      </div>
+      <div>
+        <span className="stat-value">{value === null ? "···" : value}</span>
+        <span className="stat-label">{label}</span>
+      </div>
     </div>
   );
 }
