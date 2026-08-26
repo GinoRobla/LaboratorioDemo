@@ -16,17 +16,24 @@ El bot de WhatsApp (n8n) todavía no está construido — está bloqueado hasta 
 el conector MCP de n8n (correr `/mcp` en una sesión interactiva de Claude Code). El
 panel admin sí está armado y probado localmente.
 
-## Deploy (topología decidida, todavía no ejecutada)
+## Deploy — ya levantado
 
-| Componente | Dónde |
-|---|---|
-| Bot WhatsApp (workflow n8n) + Evolution API + Postgres | Railway (entorno de demos, ya existe) |
-| Backend (`backend/`) | Railway (proyecto nuevo, junto a lo anterior) |
-| Frontend (`frontend/`) | Vercel |
+Todo vive en el proyecto **Demos** de Railway + un proyecto en Vercel:
 
-Para el deploy real falta: iniciar git en esta carpeta, pushear a un repo, conectar
-ese repo desde Railway (backend) y Vercel (frontend), y cargar las variables de
-entorno en cada plataforma (nunca commitear el `.env` con la API key de Airtable).
+| Servicio | Rol | URL |
+|---|---|---|
+| `n8n` | Motor de automatización — ahí vive (cuando se construya) el workflow completo del bot: recibe el WhatsApp, hace OCR, interpreta con IA, calcula presupuesto, responde. | `n8n-production-37a9.up.railway.app` |
+| `evolution-api` | Puente con WhatsApp — manda/recibe los mensajes. n8n le habla a este servicio. | `evolution-api-production-81570.up.railway.app` |
+| `Postgres` | Base interna de n8n (credenciales, historial de ejecuciones). No tiene relación con el catálogo del labo — eso vive en Airtable. | — |
+| `laboratorio-backend` | API de este proyecto — proxy hacia Airtable para el panel admin. Servicio nuevo, separado del bot. | `laboratorio-backend-production-0a1e.up.railway.app` |
+| Frontend (Vercel) | Panel React, consume `laboratorio-backend`. | `laboratorio-demo.vercel.app` |
+
+Repo: [github.com/GinoRobla/LaboratorioDemo](https://github.com/GinoRobla/LaboratorioDemo)
+
+Variables cargadas en `laboratorio-backend` (Railway): `AIRTABLE_CATALOGO_TABLE`,
+`AIRTABLE_HISTORIAL_TABLE`, `FRONTEND_ORIGIN` (apuntando a la URL de Vercel de arriba).
+**Pendientes**: `AIRTABLE_API_KEY` y `AIRTABLE_BASE_ID` (cargarlas Gino directo en
+Railway, nunca por chat).
 
 ## Cómo correrlo
 
