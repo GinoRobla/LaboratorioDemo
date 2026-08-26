@@ -554,214 +554,107 @@ button.icon-only svg {
   margin: 0;
 }
 
-/* Calendar */
-.calendar-layout {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 20px;
-  align-items: stretch;
-}
-
-.calendar-card {
-  background: var(--surface-2);
-  border: 1px solid var(--border-soft);
-  border-radius: 14px;
-  padding: 18px;
-}
-
-.calendar-header {
+/* Turnero: navegador de día */
+.day-nav {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.calendar-title {
-  font-family: "Manrope", sans-serif;
-  font-weight: 700;
-  font-size: 0.98rem;
-  color: var(--text);
-  text-transform: capitalize;
-}
-
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-}
-
-.calendar-weekdays {
-  margin-bottom: 6px;
-}
-
-.calendar-weekday {
-  text-align: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 4px 0;
-}
-
-.calendar-cell {
-  aspect-ratio: 1;
-  border: 1px solid transparent;
-  background: var(--surface);
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  cursor: pointer;
-  font-family: inherit;
-  color: var(--text);
-  transition: border-color 0.12s ease, background 0.12s ease;
+  gap: 18px;
+  margin-bottom: 16px;
 }
 
-.calendar-cell:hover {
-  border-color: var(--brand-500);
-}
-
-.calendar-cell.empty {
-  background: transparent;
-  cursor: default;
-}
-
-.calendar-cell.today .cell-number {
-  color: var(--brand-700);
-  font-weight: 800;
-}
-
-.calendar-cell.selected {
+.day-nav .icon-only {
   background: var(--brand-900);
-  border-color: var(--brand-900);
-}
-
-.calendar-cell.selected .cell-number {
   color: white;
+  border: none;
+  border-radius: 10px;
 }
 
-.cell-number {
-  font-size: 0.86rem;
-  font-weight: 600;
-}
-
-.cell-dots {
-  display: flex;
-  gap: 3px;
-}
-
-.dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-}
-
-.dot-ok {
+.day-nav .icon-only:hover {
   background: var(--brand-700);
 }
 
-.dot-warn {
-  background: var(--warn);
-}
-
-.dot-off {
-  background: var(--danger);
-}
-
-.calendar-cell.selected .dot-ok,
-.calendar-cell.selected .dot-warn,
-.calendar-cell.selected .dot-off {
-  background: rgba(255, 255, 255, 0.85);
-}
-
-.calendar-side {
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: 14px;
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  max-height: 460px;
-}
-
-.side-title {
-  margin: 0 0 12px;
+.day-nav-label {
   font-family: "Manrope", sans-serif;
-  font-size: 0.92rem;
   font-weight: 700;
-  text-transform: capitalize;
+  font-size: 1.02rem;
   color: var(--text);
-  flex-shrink: 0;
+  text-transform: capitalize;
+  min-width: 260px;
+  text-align: center;
 }
 
-.side-count {
-  font-weight: 500;
-  color: var(--text-muted);
-  text-transform: none;
+.day-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
 }
 
-.turno-list {
-  list-style: none;
-  margin: 0;
-  padding: 0 2px 2px 0;
+.day-picker-row input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.86rem;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.day-picker-row input[type="date"]:focus {
+  outline: none;
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px var(--brand-100);
+}
+
+.day-count {
+  font-size: 0.82rem;
+}
+
+.turno-day-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  overflow-y: auto;
-  min-height: 0;
+  gap: 10px;
 }
 
-.turno-item {
+.turno-row {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 16px;
   border: 1px solid var(--border-soft);
-  border-radius: 10px;
-  background: var(--surface-2);
+  border-radius: 12px;
+  background: var(--surface);
+  transition: border-color 0.12s ease;
+}
+
+.turno-row:hover {
+  border-color: var(--border);
+}
+
+.turno-row-time {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+  white-space: nowrap;
+  width: 76px;
   flex-shrink: 0;
 }
 
-.turno-time {
-  font-weight: 700;
-  font-size: 0.82rem;
-  color: var(--brand-900);
-  white-space: nowrap;
-}
-
-.turno-info {
+.turno-row-info {
   flex: 1;
   min-width: 0;
 }
 
-.turno-paciente {
+.turno-row-estudios {
   font-weight: 600;
-  font-size: 0.86rem;
+  font-size: 0.92rem;
+  color: var(--text);
 }
 
-.turno-estudios {
-  font-size: 0.76rem;
+.turno-row-paciente {
+  font-size: 0.8rem;
   margin-top: 2px;
-}
-
-.empty-state.small {
-  padding: 24px 8px;
-}
-
-.empty-state.small .empty-state-icon {
-  width: 36px;
-  height: 36px;
-  margin-bottom: 10px;
-}
-
-@media (max-width: 800px) {
-  .calendar-layout {
-    grid-template-columns: 1fr;
-  }
 }
 
 .empty-state {
