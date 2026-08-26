@@ -82,13 +82,6 @@ export default function App() {
           ))}
         </nav>
 
-        <div className="sidebar-footer">
-          <div className="sidebar-footer-dot" />
-          <div>
-            <div className="sidebar-footer-title">Bot activo</div>
-            <div className="sidebar-footer-sub">Presupuestos por WhatsApp</div>
-          </div>
-        </div>
       </aside>
 
       <div className="main-col">
