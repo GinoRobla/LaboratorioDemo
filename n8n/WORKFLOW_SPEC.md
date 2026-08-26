@@ -62,25 +62,27 @@ Body: { "message": { "key": { "id": "{{ $json.data.key.id }}" } } }
 La respuesta trae el campo `base64` — convertirlo a binario con un nodo "Move Binary
 Data" (o `Function`/`Code` con `Buffer.from(base64, 'base64')`) antes de mandarlo al OCR.
 
-## 3. HTTP Request — OCR con Azure Document Intelligence
+## 3. HTTP Request — OCR con Google Cloud Vision
 
-Modelo `prebuilt-read` (lectura general, multilenguaje, buen manejo de manuscrita en español).
+> Cambiado de Azure Document Intelligence a Google Cloud Vision: Azure exige tarjeta
+> para habilitar el recurso y Gino no pudo pasar esa pantalla. Google también pide
+> tarjeta para el nivel gratis en general, pero además esto simplifica el workflow —
+> Vision es **una sola llamada síncrona**, sin el paso de polling que tenía Azure.
 
-**Paso A — enviar el documento:**
-```
-POST {{AZURE_ENDPOINT}}/documentintelligence/documentModels/prebuilt-read:analyze?api-version=2024-11-30
-Content-Type: application/octet-stream
-Ocp-Apim-Subscription-Key: {{AZURE_KEY}}
-Body: <binario de la imagen>
-```
-La respuesta no trae el resultado — trae un header `Operation-Location` con la URL para consultarlo (es un proceso async).
+Modelo `DOCUMENT_TEXT_DETECTION` (lectura de documento, bueno con manuscrita).
 
-**Paso B — hacer polling (nodo HTTP Request + nodo Wait en loop, 2-3 intentos con 2s de espera):**
 ```
-GET {{Operation-Location del paso A}}
-Ocp-Apim-Subscription-Key: {{AZURE_KEY}}
+POST https://vision.googleapis.com/v1/images:annotate?key={{GOOGLE_API_KEY}}
+Content-Type: application/json
+Body: {
+  "requests": [{
+    "image": { "content": "<imagen en base64, sin encabezado data:>" },
+    "features": [{ "type": "DOCUMENT_TEXT_DETECTION" }]
+  }]
+}
 ```
-Repetir hasta que `status === "succeeded"`. El texto crudo queda en `analyzeResult.content`.
+El texto crudo queda directo en la respuesta, en `responses[0].fullTextAnnotation.text` — no
+hace falta ningún paso de espera ni de consulta posterior.
 
 ## 4. LLM call — Interpretar el texto OCR (sin tools, sin memoria)
 
@@ -248,7 +250,7 @@ Body: {
 Crear registro en tabla `Historial`:
 - `Fecha`: ahora
 - `Paciente`: (si se pidió en el paso 4, opcional)
-- `TextoOCR`: `{{ $('OCR_Azure').item.json.analyzeResult.content }}`
+- `TextoOCR`: `{{ $('OCR Google Vision').item.json.responses[0].fullTextAnnotation.text }}`
 - `EstudiosMatcheados`: `{{ $json.matcheados.map(m => m.nombre).join(', ') }}`
 - `NoReconocidos`: `{{ $json.noReconocidos.join(', ') }}`
 - `Total`: `{{ $json.total }}`
@@ -269,8 +271,8 @@ Siguiendo la convención de fallback tanto técnico como de negocio:
 
 - [ ] Evolution API: URL, nombre de instancia y `apikey` (Railway — ya está corriendo,
       solo falta configurar el webhook hacia n8n)
-- [ ] Azure Document Intelligence: endpoint + subscription key (Azure Portal → crear
-      recurso "Document Intelligence", tier gratuito alcanza para la demo)
+- [ ] Google Cloud Vision: API key con la Vision API habilitada en el proyecto (Google
+      Cloud Console → APIs & Services → Credentials → Create API Key)
 - [ ] Airtable: ya lista (confirmado por Gino)
 - [ ] Credencial del modelo LLM para el paso 4 (la que ya use n8n para los otros
       agentes de ROBU)
