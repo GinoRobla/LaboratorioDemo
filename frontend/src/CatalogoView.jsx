@@ -66,7 +66,13 @@ export default function CatalogoView() {
 
   return (
     <section>
-      <h2>Catálogo de estudios</h2>
+      <div className="panel-header">
+        <div>
+          <h2>Catálogo de estudios</h2>
+          <p className="panel-subtitle">Estudios, códigos y precios que usa el bot para armar presupuestos.</p>
+        </div>
+      </div>
+
       {error && <p className="error">{error}</p>}
 
       <form className="form-row" onSubmit={handleSubmit}>
@@ -94,7 +100,7 @@ export default function CatalogoView() {
           value={form.sinonimos}
           onChange={(e) => setForm({ ...form, sinonimos: e.target.value })}
         />
-        <button type="submit">{editingId ? "Guardar" : "Agregar"}</button>
+        <button type="submit">{editingId ? "Guardar cambios" : "Agregar estudio"}</button>
         {editingId && (
           <button type="button" className="secondary" onClick={cancelEdit}>
             Cancelar
@@ -103,42 +109,44 @@ export default function CatalogoView() {
       </form>
 
       {loading ? (
-        <p>Cargando...</p>
+        <p className="muted">Cargando catálogo…</p>
+      ) : items.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-state-icon">🧪</div>
+          <p>Todavía no hay estudios cargados. Agregá el primero arriba.</p>
+        </div>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Código</th>
-              <th>Precio</th>
-              <th>Sinónimos</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr key={item.id}>
-                <td>{item.nombre}</td>
-                <td>{item.codigo}</td>
-                <td>${Number(item.precio).toLocaleString("es-AR")}</td>
-                <td className="muted">{item.sinonimos}</td>
-                <td className="actions">
-                  <button onClick={() => startEdit(item)}>Editar</button>
-                  <button className="danger" onClick={() => handleDelete(item.id)}>
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {items.length === 0 && (
+        <div className="table-wrap">
+          <table>
+            <thead>
               <tr>
-                <td colSpan={5} className="muted">
-                  Todavía no hay estudios cargados.
-                </td>
+                <th>Nombre</th>
+                <th>Código</th>
+                <th>Precio</th>
+                <th>Sinónimos</th>
+                <th></th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.nombre}</td>
+                  <td className="muted">{item.codigo || "—"}</td>
+                  <td className="price-cell">${Number(item.precio).toLocaleString("es-AR")}</td>
+                  <td className="muted">{item.sinonimos || "—"}</td>
+                  <td className="actions">
+                    <button className="ghost-small" onClick={() => startEdit(item)}>
+                      Editar
+                    </button>
+                    <button className="danger" onClick={() => handleDelete(item.id)}>
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </section>
   );
