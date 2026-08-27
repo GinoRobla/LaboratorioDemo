@@ -67,7 +67,7 @@ export default function App() {
         <div className="sidebar-brand">
           <LogoMark />
           <div className="brand-text">
-            <span className="brand-name">NovaLab</span>
+            <span className="brand-name">IBP</span>
             <span className="brand-sub">Panel de gestión</span>
           </div>
         </div>
