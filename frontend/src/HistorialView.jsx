@@ -5,6 +5,20 @@ import Pagination from "./Pagination.jsx";
 
 const PAGE_SIZE = 10;
 
+function formatFecha(fecha) {
+  if (!fecha) return "—";
+  const d = new Date(fecha);
+  if (Number.isNaN(d.getTime())) return fecha;
+  return d.toLocaleString("es-AR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "America/Argentina/Buenos_Aires",
+  });
+}
+
 export default function HistorialView() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +71,7 @@ export default function HistorialView() {
             <tbody>
               {pageItems.map((item) => (
                 <tr key={item.id}>
-                  <td className="muted">{item.fecha}</td>
+                  <td className="muted">{formatFecha(item.fecha)}</td>
                   <td>{item.paciente || "—"}</td>
                   <td>{item.estudiosMatcheados || "—"}</td>
                   <td>
