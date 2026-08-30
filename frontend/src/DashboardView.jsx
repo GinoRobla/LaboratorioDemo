@@ -20,7 +20,7 @@ export default function DashboardView() {
   useEffect(() => {
     Promise.all([
       api.getHistorial(),
-      fetch('http://localhost:4000/api/metrics').then(r => r.json())
+      api.getMetrics()
     ]).then(([hist, met]) => {
       setHistorial(hist);
       setMetrics(met);

@@ -20,4 +20,5 @@ export const api = {
   deleteEstudio: (id) => request(`/catalogo/${id}`, { method: "DELETE" }),
   getHistorial: () => request("/historial"),
   getTurnos: () => request("/turnos"),
+  getMetrics: () => request("/metrics"),
 };
