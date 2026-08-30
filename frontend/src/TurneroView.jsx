@@ -26,11 +26,17 @@ export default function TurneroView() {
   const [selectedDate, setSelectedDate] = useState(() => new Date());
 
   useEffect(() => {
-    api
-      .getTurnos()
-      .then((data) => setTurnos(data))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    const fetchData = () => {
+      api.getTurnos()
+        .then((data) => setTurnos(data))
+        .catch((err) => setError(err.message))
+        .finally(() => setLoading(false));
+    };
+    
+    fetchData(); // Initial fetch
+    const interval = setInterval(fetchData, 5000); // Poll every 5s
+    
+    return () => clearInterval(interval);
   }, []);
 
   const turnosDelDia = useMemo(

@@ -26,11 +26,17 @@ export default function HistorialView() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    api
-      .getHistorial()
-      .then(setItems)
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    const fetchData = () => {
+      api
+        .getHistorial()
+        .then(setItems)
+        .catch((err) => setError(err.message))
+        .finally(() => setLoading(false));
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));

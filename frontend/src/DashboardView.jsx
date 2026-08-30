@@ -18,13 +18,19 @@ export default function DashboardView() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      api.getHistorial(),
-      api.getMetrics()
-    ]).then(([hist, met]) => {
-      setHistorial(hist);
-      setMetrics(met);
-    }).finally(() => setLoading(false));
+    const fetchData = () => {
+      Promise.all([
+        api.getHistorial(),
+        api.getMetrics()
+      ]).then(([hist, met]) => {
+        setHistorial(hist);
+        setMetrics(met);
+      }).finally(() => setLoading(false));
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const chartData = useMemo(() => {

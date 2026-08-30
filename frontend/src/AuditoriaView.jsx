@@ -9,10 +9,15 @@ export default function AuditoriaView() {
   const itemsPerPage = 6;
 
   useEffect(() => {
-    api
-      .getHistorial()
-      .then(setItems)
-      .finally(() => setLoading(false));
+    const fetchData = () => {
+      api.getHistorial()
+        .then(setItems)
+        .finally(() => setLoading(false));
+    };
+    
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) return <div className="py-12 text-center text-slate-500">Cargando bandeja…</div>;
