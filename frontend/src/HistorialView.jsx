@@ -45,49 +45,49 @@ export default function HistorialView() {
 
   return (
     <section>
-      {error && <p className="error">{error}</p>}
+      {error && <div className="mb-4 p-4 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm">{error}</div>}
 
       {loading ? (
-        <p className="muted">Cargando historial…</p>
+        <div className="py-12 text-center text-slate-500 text-sm">Cargando historial…</div>
       ) : items.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">
-            <IconClipboard />
+        <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-slate-50 rounded-lg border border-dashed border-slate-300">
+          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm border border-slate-100 text-slate-400">
+            <IconClipboard className="w-6 h-6" />
           </div>
-          <p>Todavía no se procesó ninguna receta.</p>
+          <p className="text-slate-600 font-medium">Todavía no se procesó ninguna receta.</p>
         </div>
       ) : (
-        <div className="table-wrap">
-          <table>
-            <thead>
+        <div className="overflow-x-auto rounded-lg border border-slate-200">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
               <tr>
-                <th>Fecha</th>
-                <th>Paciente</th>
-                <th>Estudios reconocidos</th>
-                <th>Estado</th>
-                <th>Total</th>
+                <th className="px-4 py-3">Fecha</th>
+                <th className="px-4 py-3">Paciente</th>
+                <th className="px-4 py-3">Estudios reconocidos</th>
+                <th className="px-4 py-3">Estado</th>
+                <th className="px-4 py-3">Total</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-slate-100 bg-white">
               {pageItems.map((item) => (
-                <tr key={item.id}>
-                  <td className="muted">{formatFecha(item.fecha)}</td>
-                  <td>{item.paciente || "—"}</td>
-                  <td>{item.estudiosMatcheados || "—"}</td>
-                  <td>
+                <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-4 py-3 text-slate-500">{formatFecha(item.fecha)}</td>
+                  <td className="px-4 py-3 font-medium text-slate-900">{item.paciente || "—"}</td>
+                  <td className="px-4 py-3 text-slate-700 max-w-[200px] truncate" title={item.estudiosMatcheados}>{item.estudiosMatcheados || "—"}</td>
+                  <td className="px-4 py-3">
                     {item.noReconocidos ? (
-                      <span className="badge badge-warn">
-                        <IconAlert />
-                        {item.noReconocidos}
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800" title={`No reconocidos: ${item.noReconocidos}`}>
+                        <IconAlert className="w-3.5 h-3.5" />
+                        Incompleto
                       </span>
                     ) : (
-                      <span className="badge badge-ok">
-                        <IconCheck />
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                        <IconCheck className="w-3.5 h-3.5" />
                         Completo
                       </span>
                     )}
                   </td>
-                  <td className="price-cell">${Number(item.total).toLocaleString("es-AR")}</td>
+                  <td className="px-4 py-3 font-semibold text-slate-900">${Number(item.total).toLocaleString("es-AR")}</td>
                 </tr>
               ))}
             </tbody>

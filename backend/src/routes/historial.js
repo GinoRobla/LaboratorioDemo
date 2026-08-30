@@ -9,11 +9,11 @@ function toItem(record) {
     id: record.id,
     fecha: record.fields.Fecha || "",
     paciente: record.fields.Paciente || "",
-    textoOcr: record.fields.TextoOCR || "",
+    textoOcr: record.fields.LecturaIA || "",
     estudiosMatcheados: record.fields.EstudiosMatcheados || "",
-    noReconocidos: record.fields.NoReconocidos || "",
+    noReconocidos: "", // Not explicitly stored right now
     total: record.fields.Total ?? 0,
-    imagenUrl: record.fields.Imagen?.[0]?.url || "",
+    imagenUrl: record.fields.Imagen?.[0]?.url || "https://i.imgur.com/fA1aKxK.jpeg", // Mock image since they don't have the attachment column yet
   };
 }
 

@@ -89,23 +89,29 @@ export default function CatalogoView() {
 
   return (
     <section>
-      {error && <p className="error">{error}</p>}
+      {error && <div className="mb-4 p-4 bg-red-50 text-red-700 border border-red-200 rounded-lg text-sm">{error}</div>}
 
-      <div className="section-toolbar">
-        <span className="muted">{items.length} estudio{items.length === 1 ? "" : "s"} cargado{items.length === 1 ? "" : "s"}</span>
-        <button onClick={openNew}>
-          <IconPlus />
+      <div className="flex justify-between items-center mb-6">
+        <span className="text-sm text-slate-500 font-medium">
+          {items.length} estudio{items.length === 1 ? "" : "s"} cargado{items.length === 1 ? "" : "s"}
+        </span>
+        <button 
+          onClick={openNew}
+          className="flex items-center gap-2 bg-medical-blue-600 hover:bg-medical-blue-900 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm"
+        >
+          <IconPlus className="w-4 h-4" />
           Agregar estudio
         </button>
       </div>
 
       {formOpen && (
         <Modal title={editingId ? "Editar estudio" : "Nuevo estudio"} onClose={closeForm}>
-          <form onSubmit={handleSubmit}>
-            <div className="form-grid form-grid-2">
-              <label className="span-2">
-                Nombre
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <label className="col-span-2 block">
+                <span className="text-sm font-medium text-slate-700 mb-1 block">Nombre</span>
                 <input
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent"
                   placeholder="Ej: Hemograma"
                   value={form.nombre}
                   onChange={(e) => setForm({ ...form, nombre: e.target.value })}
@@ -113,17 +119,19 @@ export default function CatalogoView() {
                   autoFocus
                 />
               </label>
-              <label>
-                Código
+              <label className="block">
+                <span className="text-sm font-medium text-slate-700 mb-1 block">Código</span>
                 <input
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent"
                   placeholder="Ej: HEM01"
                   value={form.codigo}
                   onChange={(e) => setForm({ ...form, codigo: e.target.value })}
                 />
               </label>
-              <label>
-                Precio
+              <label className="block">
+                <span className="text-sm font-medium text-slate-700 mb-1 block">Precio ($)</span>
                 <input
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent"
                   placeholder="0.00"
                   type="number"
                   step="0.01"
@@ -132,60 +140,77 @@ export default function CatalogoView() {
                   required
                 />
               </label>
-              <label className="span-2">
-                Sinónimos (para que el bot lo reconozca aunque venga mal escrito)
+              <label className="col-span-2 block">
+                <span className="text-sm font-medium text-slate-700 mb-1 block">Sinónimos (separados por coma)</span>
                 <input
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-medical-blue-500 focus:border-transparent"
                   placeholder="Ej: Hemograma completo, Hemogrma"
                   value={form.sinonimos}
                   onChange={(e) => setForm({ ...form, sinonimos: e.target.value })}
                 />
               </label>
             </div>
-            <div className="modal-actions">
-              <button type="button" className="secondary" onClick={closeForm}>
+            <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
+              <button 
+                type="button" 
+                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors" 
+                onClick={closeForm}
+              >
                 Cancelar
               </button>
-              <button type="submit">{editingId ? "Guardar cambios" : "Agregar estudio"}</button>
+              <button 
+                type="submit"
+                className="px-4 py-2 text-sm font-medium text-white bg-medical-blue-600 hover:bg-medical-blue-900 rounded-lg transition-colors shadow-sm"
+              >
+                {editingId ? "Guardar cambios" : "Agregar estudio"}
+              </button>
             </div>
           </form>
         </Modal>
       )}
 
       {loading ? (
-        <p className="muted">Cargando catálogo…</p>
+        <div className="py-12 text-center text-slate-500 text-sm">Cargando catálogo…</div>
       ) : items.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">
-            <IconFlask />
+        <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-slate-50 rounded-lg border border-dashed border-slate-300">
+          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm border border-slate-100 text-slate-400">
+            <IconFlask className="w-6 h-6" />
           </div>
-          <p>Todavía no hay estudios cargados. Agregá el primero arriba.</p>
+          <p className="text-slate-600 font-medium">Todavía no hay estudios cargados.</p>
+          <p className="text-sm text-slate-500 mt-1">Agregá el primero usando el botón de arriba.</p>
         </div>
       ) : (
-        <div className="table-wrap">
-          <table>
-            <thead>
+        <div className="overflow-x-auto rounded-lg border border-slate-200">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
               <tr>
-                <th>Nombre</th>
-                <th>Código</th>
-                <th>Precio</th>
-                <th>Sinónimos</th>
-                <th></th>
+                <th className="px-4 py-3">Nombre</th>
+                <th className="px-4 py-3">Código</th>
+                <th className="px-4 py-3">Precio</th>
+                <th className="px-4 py-3">Sinónimos</th>
+                <th className="px-4 py-3 text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-slate-100 bg-white">
               {pageItems.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.nombre}</td>
-                  <td className="muted">{item.codigo || "—"}</td>
-                  <td className="price-cell">${Number(item.precio).toLocaleString("es-AR")}</td>
-                  <td className="muted">{item.sinonimos || "—"}</td>
-                  <td className="actions">
-                    <button className="ghost-small" onClick={() => startEdit(item)}>
-                      <IconEdit />
+                <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-4 py-3 font-medium text-slate-900">{item.nombre}</td>
+                  <td className="px-4 py-3 text-slate-500">{item.codigo || "—"}</td>
+                  <td className="px-4 py-3 font-semibold text-slate-700">${Number(item.precio).toLocaleString("es-AR")}</td>
+                  <td className="px-4 py-3 text-slate-500 truncate max-w-[200px]" title={item.sinonimos}>{item.sinonimos || "—"}</td>
+                  <td className="px-4 py-3 text-right space-x-2">
+                    <button 
+                      className="inline-flex items-center gap-1.5 text-slate-500 hover:text-medical-blue-600 transition-colors text-xs font-medium px-2 py-1"
+                      onClick={() => startEdit(item)}
+                    >
+                      <IconEdit className="w-3.5 h-3.5" />
                       Editar
                     </button>
-                    <button className="danger" onClick={() => handleDelete(item.id)}>
-                      <IconTrash />
+                    <button 
+                      className="inline-flex items-center gap-1.5 text-slate-500 hover:text-red-600 transition-colors text-xs font-medium px-2 py-1"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      <IconTrash className="w-3.5 h-3.5" />
                       Eliminar
                     </button>
                   </td>

@@ -1,0 +1,253 @@
+{
+  "name": "Bot Presupuestos Laboratorio (Test OCR)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evolution-webhook",
+        "options": {}
+      },
+      "name": "1. Recibe WhatsApp (Evolution)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.body.data.message.imageMessage ? true : false }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "2. ¿Es una imagen?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Env').item.json.EVOLUTION_URL }}/chat/getBase64FromMediaMessage/{{ $('Env').item.json.INSTANCE_NAME }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ { key: { id: $json.body.data.key.id } } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "3. Descargar Imagen (Base64)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 280]
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "options": {}
+      },
+      "name": "4. TEST OCR: ¿Qué motor usar?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [750, 280]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://vision.googleapis.com/v1/images:annotate?key={{ $('Env').item.json.GOOGLE_API_KEY }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "requests",
+              "value": "={{ [{ image: { content: $json.base64 }, features: [{ type: 'DOCUMENT_TEXT_DETECTION' }] }] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Opción A: Google Vision (OCR Puro)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1000, 150]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "messages": {
+          "messageValues": [
+            {
+              "content": "Extraé el texto de esta receta médica. Prestá atención a los nombres de los estudios de laboratorio.",
+              "role": "user"
+            }
+          ]
+        }
+      },
+      "name": "Opción B: GPT-4o Vision",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [1000, 400]
+    },
+    {
+      "parameters": {
+        "operation": "list",
+        "base": {
+          "__rl": true,
+          "value": "={{ $('Env').item.json.AIRTABLE_BASE_ID }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Catalogo",
+          "mode": "id"
+        }
+      },
+      "name": "5. Obtener Catálogo (Airtable)",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [1300, 280]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Código de matching difuso (Levenshtein)\n// Cruza los textos del OCR con el Catálogo de Airtable\n\nconst detectados = ['Hemograma', 'Glucemia']; // Mock hasta que definas el OCR\nconst catalogo = $input.all().map(i => i.json.fields);\n\n// Lógica de matching...\nreturn [{ json: { matcheados: catalogo.slice(0,2), total: 15000 } }];"
+      },
+      "name": "6. Matching & Precio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1550, 280]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Env').item.json.EVOLUTION_URL }}/message/sendText/{{ $('Env').item.json.INSTANCE_NAME }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $('1. Recibe WhatsApp (Evolution)').item.json.body.data.key.remoteJid }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ 'Hola! El presupuesto de tus estudios es: $' + $json.total }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "7. Responder WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1800, 280]
+    }
+  ],
+  "connections": {
+    "1. Recibe WhatsApp (Evolution)": {
+      "main": [
+        [
+          {
+            "node": "2. ¿Es una imagen?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. ¿Es una imagen?": {
+      "main": [
+        [
+          {
+            "node": "3. Descargar Imagen (Base64)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Descargar Imagen (Base64)": {
+      "main": [
+        [
+          {
+            "node": "4. TEST OCR: ¿Qué motor usar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. TEST OCR: ¿Qué motor usar?": {
+      "main": [
+        [
+          {
+            "node": "Opción A: Google Vision (OCR Puro)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Opción B: GPT-4o Vision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Opción A: Google Vision (OCR Puro)": {
+      "main": [
+        [
+          {
+            "node": "5. Obtener Catálogo (Airtable)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Opción B: GPT-4o Vision": {
+      "main": [
+        [
+          {
+            "node": "5. Obtener Catálogo (Airtable)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5. Obtener Catálogo (Airtable)": {
+      "main": [
+        [
+          {
+            "node": "6. Matching & Precio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6. Matching & Precio": {
+      "main": [
+        [
+          {
+            "node": "7. Responder WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}
